@@ -3,116 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Reverser</title>
+    <title>Text Transformer</title>
     <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #166088;
+            --accent: #4fc3f7;
+            --danger: #f44336;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f5f7fa;
+            padding: 20px;
+            max-width: 100%;
+            min-height: 100vh;
+        }
+        
+        .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
-            text-align: center;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+        
         h1 {
-            color: #333;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
         }
+        
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .mode-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--light);
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .mode-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
         textarea {
             width: 100%;
-            height: 100px;
-            margin: 20px 0;
-            padding: 10px;
+            min-height: 150px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            resize: vertical;
+            margin-bottom: 15px;
+            transition: border 0.3s;
         }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 10px 5px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.2);
         }
-        button:hover {
-            background-color: #45a049;
-        }
-        #reverseBtn {
-            background-color: #2196F3;
-        }
-        #reverseBtn:hover {
-            background-color: #0b7dda;
-        }
-        #copyBtn {
-            background-color: #ff9800;
-        }
-        #copyBtn:hover {
-            background-color: #e68a00;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px dashed #ccc;
-            border-radius: 4px;
-            min-height: 100px;
-            text-align: left;
-            background-color: #f9f9f9;
-            white-space: pre-wrap;
-        }
+        
         .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
             margin-bottom: 20px;
         }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #3d8b40;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e68a00;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        #result {
+            min-height: 150px;
+            padding: 15px;
+            border: 1px dashed #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
         .notification {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #4CAF50;
+            background-color: var(--success);
             color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
+            padding: 12px 24px;
+            border-radius: 5px;
             z-index: 1000;
             opacity: 0;
             transition: opacity 0.5s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
+        
         .show {
             opacity: 1;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            
+            textarea {
+                min-height: 120px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Word Reverser</h1>
-    
-    <textarea id="inputText" placeholder="Enter your text here..."></textarea>
-    
-    <div class="action-buttons">
-        <button id="reverseBtn">Reverse Words</button>
-        <button id="revertBtn">Revert Back</button>
-        <button id="copyBtn">Copy Text</button>
-        <button id="clearBtn">Clear</button>
+    <div class="container">
+        <h1>Text Transformer</h1>
+        
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="reverse">Reverse Words</button>
+            <button class="mode-btn" data-mode="encrypt">Encrypt Text</button>
+        </div>
+        
+        <textarea id="inputText" placeholder="Enter your text here..."></textarea>
+        
+        <div class="action-buttons">
+            <button id="transformBtn" class="btn btn-primary">
+                <span>Transform</span>
+            </button>
+            <button id="revertBtn" class="btn btn-success">
+                <span>Revert</span>
+            </button>
+            <button id="copyBtn" class="btn btn-warning">
+                <span>Copy</span>
+            </button>
+            <button id="clearBtn" class="btn btn-danger">
+                <span>Clear</span>
+            </button>
+        </div>
+        
+        <div id="result"></div>
     </div>
     
-    <div id="result"></div>
     <div id="notification" class="notification">Text copied to clipboard!</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
             const inputText = document.getElementById('inputText');
-            const reverseBtn = document.getElementById('reverseBtn');
+            const transformBtn = document.getElementById('transformBtn');
             const revertBtn = document.getElementById('revertBtn');
             const copyBtn = document.getElementById('copyBtn');
             const clearBtn = document.getElementById('clearBtn');
             const resultDiv = document.getElementById('result');
             const notification = document.getElementById('notification');
+            const modeBtns = document.querySelectorAll('.mode-btn');
             
+            // State variables
             let originalText = '';
-            let reversedText = '';
+            let transformedText = '';
+            let currentMode = 'reverse';
             
-            // Function to reverse each word in the text
+            // Mode selection
+            modeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modeBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentMode = this.dataset.mode;
+                    updateTransformButtonText();
+                });
+            });
+            
+            function updateTransformButtonText() {
+                const text = currentMode === 'reverse' ? 'Reverse Words' : 'Encrypt Text';
+                transformBtn.querySelector('span').textContent = text;
+            }
+            
+            // Encryption functions
+            function encryptText(text) {
+                return text.split('').map(char => {
+                    const code = char.charCodeAt(0);
+                    // Shift character codes to make it unreadable
+                    return String.fromCharCode(code + 5);
+                }).join('');
+            }
+            
+            function decryptText(text) {
+                return text.split('').map(char => {
+                    const code = char.charCodeAt(0);
+                    return String.fromCharCode(code - 5);
+                }).join('');
+            }
+            
+            // Reverse words function
             function reverseWords(text) {
                 return text.split(' ').map(word => {
                     return word.split('').reverse().join('');
@@ -120,43 +282,58 @@
             }
             
             // Show notification
-            function showNotification() {
+            function showNotification(message) {
+                notification.textContent = message;
                 notification.classList.add('show');
                 setTimeout(() => {
                     notification.classList.remove('show');
                 }, 2000);
             }
             
-            // Reverse button click handler
-            reverseBtn.addEventListener('click', function() {
+            // Transform button click handler
+            transformBtn.addEventListener('click', function() {
                 originalText = inputText.value;
-                reversedText = reverseWords(originalText);
-                resultDiv.textContent = reversedText;
+                
+                if (!originalText.trim()) {
+                    showNotification('Please enter some text first!');
+                    return;
+                }
+                
+                if (currentMode === 'reverse') {
+                    transformedText = reverseWords(originalText);
+                } else {
+                    transformedText = encryptText(originalText);
+                }
+                
+                resultDiv.textContent = transformedText;
+                showNotification(currentMode === 'reverse' ? 'Words reversed!' : 'Text encrypted!');
             });
             
             // Revert button click handler
             revertBtn.addEventListener('click', function() {
-                if (originalText) {
-                    resultDiv.textContent = originalText;
-                } else {
-                    alert('Please reverse some text first!');
+                if (!originalText) {
+                    showNotification('Nothing to revert!');
+                    return;
                 }
+                
+                resultDiv.textContent = originalText;
+                showNotification('Text reverted!');
             });
             
             // Copy button click handler
             copyBtn.addEventListener('click', function() {
-                if (resultDiv.textContent.trim() === '') {
-                    alert('No text to copy!');
+                if (!resultDiv.textContent.trim()) {
+                    showNotification('No text to copy!');
                     return;
                 }
                 
                 navigator.clipboard.writeText(resultDiv.textContent)
                     .then(() => {
-                        showNotification();
+                        showNotification('Text copied to clipboard!');
                     })
                     .catch(err => {
                         console.error('Failed to copy text: ', err);
-                        alert('Failed to copy text. Please try again.');
+                        showNotification('Failed to copy text. Please try again.');
                     });
             });
             
@@ -165,8 +342,12 @@
                 inputText.value = '';
                 resultDiv.textContent = '';
                 originalText = '';
-                reversedText = '';
+                transformedText = '';
+                showNotification('Cleared!');
             });
+            
+            // Initialize
+            updateTransformButtonText();
         });
     </script>
 </body>
